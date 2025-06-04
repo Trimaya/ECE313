@@ -1,0 +1,47 @@
+% Define the parameters for the loops
+BOthicks = [0.004, 0.008, 0.012, 0.008, 0.008, 0.008, 0.008];
+TLthicks = [0.006, 0.006, 0.006, 0.003, 0.009, 0.006, 0.006];
+TOthicks = [0.002, 0.002, 0.002, 0.002, 0.002, 0.001, 0.003];
+voltages = [5, 6, 7, 8, 9, 10];
+ers_times = {'10ns', '100ns', '1us', '10us', '100us', '1ms', '10ms', '100ms'};
+pgm_time = '1s';
+
+% Directory containing the data files
+baseDir = '/path/to/your/data/files/'; % Adjust the path accordingly
+
+% Loop over each thickness
+for t = 1:length(BOthicks)
+    figure; % Create a new figure for each thickness
+    sgtitle(sprintf('Memory Windows for BO=%.3f TO=%.3f TL=%.3f', BOthicks(t), TOthicks(t), TLthicks(t)));
+
+    % Loop over each voltage
+    for v = 1:length(voltages)
+        subplot(2, 3, v); % Create a subplot for each voltage
+        hold on;
+        grid on;
+
+        % Load and plot the PGM curve
+        pgmFile = sprintf('%sBO%.3fTO%.3fTL%.3f_%d_extracted_data_PGM_%s.dat', ...
+                          baseDir, BOthicks(t), TOthicks(t), TLthicks(t), voltages(v), pgm_time);
+        data = load(pgmFile);
+        plot(data(:, 1), data(:, 2), 'LineWidth', 2, 'DisplayName', 'PGM');
+
+        % Plot each ERS curve
+        for ers = 1:length(ers_times)
+            ersFile = sprintf('%sBO%.3fTO%.3fTL%.3f_%d_extracted_data_ERS_%s.dat', ...
+                              baseDir, BOthicks(t), TOthicks(t), TLthicks(t), voltages(v), ers_times{ers});
+            data = load(ersFile);
+            plot(data(:, 1), data(:, 2), 'DisplayName', sprintf('ERS %s', ers_times{ers}));
+        end
+
+        % Customize subplot
+        xlabel('Gate Voltage (V)');
+        ylabel('Log(Drain Current) (A)');
+        set(gca, 'YScale', 'log'); % Setting y-axis to logarithmic scale
+        title(sprintf('V = %d V', voltages(v)));
+        legend('show', 'Location', 'bestoutside'); % Show legend outside the plot area
+    end
+
+    % Save each figure with a descriptive name
+    savefig(sprintf('MemoryWindows_BO%.3f.fig', BOthicks(t)));
+end

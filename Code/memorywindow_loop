@@ -1,0 +1,114 @@
+######
+# List of time designations for PGM and ERS
+assign name=times c.value=("10ns", "100ns", "1us", "10us", "100us", "1ms", "10ms", "100ms", "1s")
+
+# Begin the loop over time designations
+loop steps=9
+    # Assign the current time designation from the list
+    assign name=current_time c.value=$times[$loop]
+
+    # Define the file name dynamically based on the current time designation
+    assign name=pgm_file c.value="BO0.004TO0.002TL0.006_v_SONOS_PGM_" + $current_time + ".str"
+    assign name=ers_file c.value="BO0.004TO0.002TL0.006_10_SONOS_ERS_" + $current_time + ".str"
+    
+    # PGM Simulation Block
+    go victorydevice simflags = "-P 10"
+    mesh inf=$pgm_file
+    load infile=$pgm_file master
+    contact name=gate n.poly
+    models srh fermi FNORD PF.NITRIDE NEARFLG print
+    method carriers=2
+    solve init
+    solve prev
+    solve name=drain vstep=0.5 vfinal=1.0
+    log outf="test" + $current_time + "pgm.log"
+    solve name=gate vgate=-4 vstep=0.2 vfinal=10.0
+    extract name="vt_" + $current_time (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
+    log off
+
+    # ERS Simulation Block
+    go victorydevice simflags = "-P 10"
+    mesh inf=$ers_file
+    load infile=$ers_file master
+    contact name=gate n.poly
+    models srh fermi FNORD PF.NITRIDE NEARFLG print
+    method carriers=2
+    solve init
+    solve prev
+    solve name=drain vstep=0.5 vfinal=1.0
+    log outf="test" + $current_time + "ers.log"
+    solve name=gate vgate=-4 vstep=0.2 vfinal=10.0
+    extract name="vt_ERS_" + $current_time (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
+    log off
+l.end
+
+########
+
+
+loop steps = 7
+assign name=BOthick n.value=(0.004, 0.008, 0.012, 0.008, 0.008, 0.008, 0.008)
+assign name=TLthick n.value=(0.006, 0.006, 0.006, 0.003, 0.009, 0.006, 0.006)
+assign name=TOthick n.value=(0.002, 0.002, 0.002, 0.002, 0.002, 0.001, 0.003)
+
+
+loop steps = 6
+assign name=Vn n.value=(5, 6, 7, 8, 9, 10)
+
+loop steps = 9
+assign name=VPW c.value = c1 = "hola"
+
+#set BOthick=0.008
+#set TOthick=0.002
+#set TLthick=0.006 
+
+
+
+#pgm1s
+
+go victorydevice simflags = "-P 10"
+
+mesh inf=BO0.004TO0.002TL0.006_v_SONOS_PGM_1s.str
+
+load infile=BO0.004TO0.002TL0.006_v_SONOS_PGM_1s.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=test1spgm.log
+solve name=gate vgate=-4 vstep=0.2 vfinal=10.0
+
+
+extract name="vt_1s" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
+log off
+
+#ers100ms
+
+go victorydevice simflags = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TLthick'TL$'TLthick'_$'Vn'_SONOS_ERS_100ms.str master
+
+
+load infile=BO0.004TO0.002TL0.006_10_SONOS_ERS_100ms.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=test100msERS.log
+solve name=gate vgate=-4 vstep=0.2 vfinal=10.0
+
+extract name="vt_ERS_100ms" (xintercept(maxslope(curve(abs(v."gate"),abs(i."drain")))) - abs(ave(v."drain"))/2.0)
+log off
+
+

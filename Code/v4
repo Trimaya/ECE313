@@ -1,0 +1,193 @@
+loop steps = 7
+assign name=BOthick n.value=(0.004, 0.008, 0.012, 0.008, 0.008, 0.008, 0.008)
+assign name=TLthick n.value=(0.006, 0.006, 0.006, 0.003, 0.009, 0.006, 0.006)
+assign name=TOthick n.value=(0.002, 0.002, 0.002, 0.002, 0.002, 0.001, 0.003)
+
+
+loop steps = 6
+assign name=Vn n.value=(5, 6, 7, 8, 9, 10)
+
+#set BOthick=0.008
+#set TOthick=0.002
+#set TLthick=0.006 
+
+set name="MOS_Lgg_500nm"
+
+go victorydevice simflags = "-P 10"
+
+mesh VOIDS space.mult=1.0
+
+#Mesh in X-Direction
+
+x.mesh loc=0 spac=0.01
+x.mesh loc=0.05 spac=0.01
+x.mesh loc=0.09 spac=0.005
+x.mesh loc=0.1 spac=0.005
+x.mesh loc=0.2 spac=0.01
+x.mesh loc=0.59 spac=0.005
+x.mesh loc=0.60 spac=0.005
+x.mesh loc=0.61 spac=0.005
+x.mesh loc=0.62 spac=0.01
+x.mesh loc=0.7 spac=0.01
+
+# Blocking Oxide Thickness = 12 nm
+# Trapping Oxide Thickness = 9 nm
+# Tunneling Oxide Thickness = 2 nm
+
+#Mesh in Y-Direction
+
+y.mesh loc=-0.030 spac=0.001
+y.mesh loc=-0.015 spac=0.001
+y.mesh loc=-0.014 spac=0.001
+y.mesh loc=-0.008 spac=0.001
+y.mesh loc=-0.009 spac=0.001
+y.mesh loc=-0.006 spac=0.001
+y.mesh loc=0 spac=0.001
+y.mesh loc=-0.002 spac=0.001
+y.mesh loc=0.002 spac=0.001
+y.mesh loc=0.05 spac=0.005
+y.mesh loc=0.1 spac=0.02
+y.mesh loc=0.205 spac=0.02
+
+#Region and Material Selection
+
+#Blocking Oxide
+region num=1 x.min=0.1 x.max=0.6 y.min=(0.002-$TOthick-$TLthick-$BOthick) y.max=(0.002-$TOthick-$TLthick) material=Al2O3
+
+#Trapping Layer
+region num=2 x.min=0.1 x.max=0.6 y.min=(0.002-$TOthick-$TLthick) y.max=(0.002-$TOthick) material=nitride
+
+#Tunneling Oxide
+region num=3 x.min=0.1 x.max=0.6 y.min=(0.002-$TOthick) y.max=0.002 material=oxide
+
+#Substrate
+region num=4 x.min=0.0 x.max=0.7 y.min=0.002 y.max=0.205 material=Silicon
+
+#Electrodes
+
+#Source_Electrode
+elect name=source x.min=0 x.max=0.05 y.min=0.002 y.max=0.002
+
+#Gate_Electrode
+elect name=gate x.min=0.1 x.max=0.6 y.min=(0.002-$TOthick-$TLthick-$BOthick-0.005) y.max=(0.002-$TOthick-$TLthick-$BOthick)
+
+#Drain_Electrode
+elect name=drain x.min=0.65 x.max=0.70 y.min=0.002 y.max=0.002
+
+#Substrate
+elect name=substrate bottom
+
+#Doping
+
+#Silicon_Substrate_Doping
+
+doping uniform x.min=0.0 x.max=0.7 y.min=0.002 y.max=0.205 conc=1e18 p.type material=Silicon
+
+#Source_Doping
+
+doping uniform x.min=0.0 x.max=0.1 y.min=0.002 y.max=0.05 conc=1e20 n.type material=Silicon
+
+#Drain_Doping
+
+doping uniform x.min=0.6 x.max=0.7 y.min=0.002 y.max=0.05 conc=1e20 n.type material=Silicon
+
+#Material and Mobility
+
+material material=nitride semiconductor nc300=1.0e19 nv300=1.0e19 taun0=1.0 taup0=1.0 mun=1.0e-2 mup=1.0e-2 me.tunnel=0.4 mh.tunnel=0.4 align=0.5
+
+material material=oxide semiconductor nc300=1.0e19 nv300=1.0e19 me.tunnel=0.4 mh.tunnel=0.4 taun0=1.0 taup0=1.0 mun=1.0e-1 mup=1.0e-1 align=0.5 eg300=7.62
+
+material material=Al2O3 semiconductor nc300=1e19 nv300=1e19 taun0=1.0 taup0=1.0 mc=0.2 mv=0.6 permitti=9.3 affinity=1.8 EG300=8.0
+
+
+###Contact_Specification
+contact name=source neutral
+contact name=drain neutral
+contact name=gate n.poly
+contact name=substrate
+
+### Nitride Parameters
+
+NITRIDECHARGE region=2 ACCEPTOR nt.n=1e19 sigmat.n=1e-12 elec.depth=1.5 sigman.p=0.0 tau.n=1.0e-4 tau.p=1.0e-4
+
+# Structure OutPuts
+
+output con.band val.band e.mobility h.mobility band.param traps traps.ft u.trap
+# Visualisation of Trapped Density and Electron Conc in the Nitride Layer
+probe integrate sonos.charge name="nettcharge" region=2
+PROBE MAX N.CONC NAME="Peak Electrons" region=2
+
+#Models for SONOS
+
+models srh fermi FNORD PF.NITRIDE NEARFLG sonos.el qtnl.derivs print temperature=300
+
+method climit=1.0e4 maxtraps=5
+
+#traps traps.ft
+
+solve init
+solve prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+#Program and Erase
+
+#Program
+
+LOG outfile= BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_Transient_Analysis_PGM.log SONOS.CURR J.TUN
+
+solve name=gate tstep=1e-10 ramptime=1e-9 tfinal=0.00000001 vfinal=$'Vn' prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_10ns.str
+
+solve tstop=0.00000010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_100ns.str
+
+solve tstop=0.0000010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_1us.str
+
+solve tstop=0.000010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_10us.str
+
+solve tstop=0.00010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_100us.str
+
+solve tstop=0.0010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_1ms.str
+
+solve tstop=0.010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_10ms.str
+
+solve tstop=0.1 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_100ms.str
+
+solve tstop=1 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_1s.str
+
+
+
+solve name=gate tstep=1e-11 ramptime=1e-9 tfinal=0.00000001 vfinal=-$'Vn' prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_10ns.str
+
+solve tstop=1.00000010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_100ns.str
+
+solve tstop=1.0000010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_1us.str
+
+solve tstop=1.000010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_10us.str
+
+solve tstop=1.00010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_100us.str
+
+solve tstop=1.0010 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_1ms.str
+
+solve tstop=1.10 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_10ms.str
+
+solve tstop=2 prev
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_100ms.str
+log off
+l.end
+l.end
+quit

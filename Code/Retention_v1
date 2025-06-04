@@ -1,0 +1,472 @@
+#Step4 Retention
+
+#Retention Program
+
+#All thicknesses
+loop steps = 7
+assign name=BOthick n.value=(0.004, 0.008, 0.012, 0.008, 0.008, 0.008, 0.008)
+assign name=TLthick n.value=(0.006, 0.006, 0.006, 0.003, 0.009, 0.006, 0.006)
+assign name=TOthick n.value=(0.002, 0.002, 0.002, 0.002, 0.002, 0.001, 0.003)
+
+
+go victorydevice simflags = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+#Set Vn to 5v (where best memory window was found)
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_5_SONOS_PGM_1s.str master
+
+contact name=gate n.poly
+
+models srh fermi FNORD PF.NITRIDE NEARFLG sonos.el qtnl.derivs print temperature=300
+
+solve init
+solve prev
+
+method climit=1.0e4 maxtraps=5 dt.max=1.0e7
+
+#Retention program files
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_PGM_1s_ret.log sonos.curr j.tun
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=1e-6
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1us.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=1e-1
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_100ms.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=1
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1s.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=3600
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1h.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=86400
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1day.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-9 tstop=2.6e6
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1month.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-9 tstop=3.14e7
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1year.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-8 tstop=3.14e8
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_10years.str
+log off
+
+#Retention Erase files
+
+go victorydevice simflags = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_5_SONOS_ERS_100ms.str master
+
+contact name=gate n.poly
+
+models srh fermi FNORD PF.NITRIDE NEARFLG sonos.el qtnl.derivs print temperature=300
+
+solve init
+solve prev
+
+method climit=1.0e4 maxtraps=5 dt.max=1.0e7
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_ERS_100ms_ret.log sonos.curr j.tun
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=1e-6
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1us.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=1e-1
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_100ms.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=1
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1s.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=3600
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1h.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-12 tstop=86400
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1day.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-9 tstop=2.6e6
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1month.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-9 tstop=3.14e7
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1year.str
+
+solve vgate=0.0 vdrain=0.0 ramptime=1e-10 tstep=1e-8 tstop=3.14e8
+save outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_10years.str
+
+log off
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1us.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1us.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1us" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1us.dat"
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1us.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1us.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1us" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1us.dat"
+log off
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_100ms.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_100ms.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_100ms" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_100ms.dat"
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_100ms.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_100ms.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_100ms" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_100ms.dat"
+log off
+#
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1s.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1s.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1s" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1s.dat"
+
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1s.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1s.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1s" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1s.dat"
+log off
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'__SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1h.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1h.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1h" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1h.dat"
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1h.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1h.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1h" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1h.dat"
+log off
+
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1day.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1day.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1day" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1day.dat"
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1day.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1day.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1day" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1day.dat"
+log off
+
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1month.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1month.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1month" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1month.dat"
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1month.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1month.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1month" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1month.dat"
+log off
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1year.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_1year.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1year" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_1year.dat"
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1year.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_1year.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1year" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_1year.dat"
+log off
+
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_10years.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_PGM_10years.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_10years" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_PGM_10years.dat"
+log off
+
+#2 ERS
+
+go victorydevice simflag = "-P 10"
+
+mesh inf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_SONOS.str
+
+load infile=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_10years.str master
+contact name=gate n.poly
+models srh fermi FNORD PF.NITRIDE NEARFLG print
+
+method carriers=2
+
+solve init
+solve prev
+
+solve name=drain vstep=0.5 vfinal=1.0
+
+log outf=BO$'BOthick'TO$'TOthick'TL$'TLthick'_Ret_ERS_10years.log
+solve name=gate vgate=-2 vstep=0.1 vfinal=8
+
+#
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_10years" (xintercept(maxslope(curve(abs(v."gate"), abs(i."drain")))) - abs(ave(v."drain"))/2.0) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_5vt_ERS_10years.dat"
+log off
+
+l.end
+l.end
+quit

@@ -1,0 +1,60 @@
+#All thicknesses
+loop steps = 7
+assign name=BOthick n.value=(0.004, 0.008, 0.012, 0.008, 0.008, 0.008, 0.008)
+assign name=TLthick n.value=(0.006, 0.006, 0.006, 0.003, 0.009, 0.006, 0.006)
+assign name=TOthick n.value=(0.002, 0.002, 0.002, 0.002, 0.002, 0.001, 0.003)
+
+#All voltages
+LOOP steps=6
+assign name=Vn n.value=(5, 6, 7, 8, 9 , 10)
+
+go victorydevice simflags = "-P 10"
+
+#PGM 1s
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_PGM_1s.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_PGM_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_PGM_1s.dat"
+
+
+#ERS 10 ns
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_10ns.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_10ns_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_10ns.dat"
+
+#ERS 100ns
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_100ns.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_100ns_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_100ns.dat"
+
+#ERS 1us
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_1us.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_1us_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_1us.dat"
+
+#ERS 10us
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_10us.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_10us_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_10us.dat"
+
+#ERS 100 us
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_100us.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_100us_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_100us.dat"
+
+#ERS 1 ms
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_1ms.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_1ms_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_1ms.dat"
+
+#ERS 10 ms
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_10ms.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_10ms_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_10ms.dat"
+
+#ERS 100 ms
+#go victorydevice simflags = "-P 10"
+extract init infile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_SONOS_ERS_100ms.log"
+extract name="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_ERS_100ms_maxId_at_Vg" max(curve(v."gate", i."drain")) outfile="BO$'BOthick'TO$'TOthick'TL$'TLthick'_$'Vn'_extracted_data_ERS_100ms.dat"
+
+l.end
+l.end
+quit
